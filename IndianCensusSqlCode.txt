@@ -127,23 +127,19 @@ select SUM(Population ) as Total_Population from dataset_2;
 
   select * from #joiningtable;
 
--- table making for male and female state wise
+
+
+-- population of male and female
 -- formaula to find count of male and female
 -- male =population/(1+sex_ratio)   , female = (population * sex_ratio)/(1 + sex_ratio)
 
-drop table if exists #fmcount
-create table #fmcount(
-state nvarchar(255),
-male_count int ,
-female_count int
-)
-Insert into #fmcount
-select fm.state , sum(fm.male) Male_Count ,sum(fm.female) Female_Count from 
-(select district ,state  , round(( Population/1+(sex_ratio) ) , 0) Male ,
-round(((population * sex_ratio)/(1+sex_ratio)) , 0) as Female from #joiningtable)  fm
-group by fm.State;
-
-select * from #fmcount
+select fm.district , fm.state ,fm.Population  population, 
+round(fm.population/(1+fm.sex_ratio),0) Male , 
+round((fm.population * fm.sex_ratio )/(1+fm.sex_ratio),0) Female
+from
+(select a.district , a.state ,a.sex_ratio/1000 sex_ratio ,b.population from 
+dataset_1 a inner join dataset_2 b
+on a.District=b.District) fm
 
 
  -- literate people and illiterate people counting state wise
